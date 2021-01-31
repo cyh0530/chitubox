@@ -49,7 +49,7 @@ const EditableCell = ({
 const Model = ({ brand, models }) => {
   const { Option } = Select;
   const [form] = Form.useForm();
-  const [data, setData] = useState(defaultValueModels[brand]);
+  const [data, setData] = useState(defaultValueModels[brand] || defaultValueModels["Default"]);
   const [editingKey, setEditingKey] = useState("");
 
   const isEditing = (record) => record.key === editingKey;
@@ -128,6 +128,8 @@ const Model = ({ brand, models }) => {
               <Form.Item name="color" style={{ width: "100%" }}>
                 <Select defaultValue={row.color}>
                   <Option value="White">White</Option>
+                  <Option value="Clear">Clear</Option>
+                  <Option value="Grey">Grey</Option>
                 </Select>
               </Form.Item>
             );
