@@ -1,23 +1,23 @@
 {
   "files": {
     "main.css": "/chitubox/static/css/main.1cbe692f.chunk.css",
-    "main.js": "/chitubox/static/js/main.26a241d0.chunk.js",
-    "main.js.map": "/chitubox/static/js/main.26a241d0.chunk.js.map",
+    "main.js": "/chitubox/static/js/main.13738f23.chunk.js",
+    "main.js.map": "/chitubox/static/js/main.13738f23.chunk.js.map",
     "runtime-main.js": "/chitubox/static/js/runtime-main.29ab58e1.js",
     "runtime-main.js.map": "/chitubox/static/js/runtime-main.29ab58e1.js.map",
     "static/css/2.f3f01324.chunk.css": "/chitubox/static/css/2.f3f01324.chunk.css",
-    "static/js/2.a1c4870c.chunk.js": "/chitubox/static/js/2.a1c4870c.chunk.js",
-    "static/js/2.a1c4870c.chunk.js.map": "/chitubox/static/js/2.a1c4870c.chunk.js.map",
+    "static/js/2.3b8e2717.chunk.js": "/chitubox/static/js/2.3b8e2717.chunk.js",
+    "static/js/2.3b8e2717.chunk.js.map": "/chitubox/static/js/2.3b8e2717.chunk.js.map",
     "index.html": "/chitubox/index.html",
     "static/css/2.f3f01324.chunk.css.map": "/chitubox/static/css/2.f3f01324.chunk.css.map",
     "static/css/main.1cbe692f.chunk.css.map": "/chitubox/static/css/main.1cbe692f.chunk.css.map",
-    "static/js/2.a1c4870c.chunk.js.LICENSE.txt": "/chitubox/static/js/2.a1c4870c.chunk.js.LICENSE.txt"
+    "static/js/2.3b8e2717.chunk.js.LICENSE.txt": "/chitubox/static/js/2.3b8e2717.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.29ab58e1.js",
     "static/css/2.f3f01324.chunk.css",
-    "static/js/2.a1c4870c.chunk.js",
+    "static/js/2.3b8e2717.chunk.js",
     "static/css/main.1cbe692f.chunk.css",
-    "static/js/main.26a241d0.chunk.js"
+    "static/js/main.13738f23.chunk.js"
   ]
 }
