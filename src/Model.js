@@ -8,8 +8,12 @@ import {
   Typography,
   Button,
   Select,
+  Row,
+  Col,
 } from "antd";
-import { defaultValueCFG, defaultValueModels } from "./default";
+import { defaultValueCFG, defaultValueModels, resinColors } from "./default";
+import jszip from "jszip";
+import { saveAs } from "file-saver";
 
 const EditableCell = ({
   editing,
@@ -49,7 +53,9 @@ const EditableCell = ({
 const Model = ({ brand, models }) => {
   const { Option } = Select;
   const [form] = Form.useForm();
-  const [data, setData] = useState(defaultValueModels[brand] || defaultValueModels["Default"]);
+  const [data, setData] = useState(
+    defaultValueModels[brand] || defaultValueModels["Default"]
+  );
   const [editingKey, setEditingKey] = useState("");
 
   const isEditing = (record) => record.key === editingKey;
@@ -93,118 +99,26 @@ const Model = ({ brand, models }) => {
       width: "16%",
     },
     {
-      title: "Color",
-      dataIndex: "color",
-      width: "16%",
-      render: (text, row) => {
-        switch (row.__resin) {
-          case "Basic":
-            return (
-              <Form.Item name="color" style={{ width: "100%" }}>
-                <Select defaultValue={row.color}>
-                  <Option value="White">White</Option>
-                  <Option value="Grey">Grey</Option>
-                  <Option value="Matte Black">Matte Black</Option>
-                  <Option value="Yellow">Yellow</Option>
-                  <Option value="Pink">Pink</Option>
-                  <Option value="Blue">Blue</Option>
-                  <Option value="Green">Green</Option>
-                  <Option value="Purple">Purple</Option>
-                </Select>
-              </Form.Item>
-            );
-          case "PP Like":
-          case "Flex 52D":
-          case "Flex 57A":
-            return (
-              <Form.Item name="color" style={{ width: "100%" }}>
-                <Select defaultValue={row.color}>
-                  <Option value="Clear">Clear</Option>
-                </Select>
-              </Form.Item>
-            );
-          case "Engineering Strong":
-            return (
-              <Form.Item name="color" style={{ width: "100%" }}>
-                <Select defaultValue={row.color}>
-                  <Option value="White">White</Option>
-                  <Option value="Clear">Clear</Option>
-                  <Option value="Grey">Grey</Option>
-                </Select>
-              </Form.Item>
-            );
-          case "Engineering HT":
-            return (
-              <Form.Item name="color" style={{ width: "100%" }}>
-                <Select defaultValue={row.color}>
-                  <Option value="Clear">Clear</Option>
-                </Select>
-              </Form.Item>
-            );
-          case "HD 4K":
-            return (
-              <Form.Item name="color" style={{ width: "100%" }}>
-                <Select defaultValue={row.color}>
-                  <Option value="Grey">Grey</Option>
-                </Select>
-              </Form.Item>
-            );
-          case "Fast 500":
-            return (
-              <Form.Item name="color" style={{ width: "100%" }}>
-                <Select defaultValue={row.color}>
-                  <Option value="Grey">Grey</Option>
-                </Select>
-              </Form.Item>
-            );
-          case "Castable":
-            return (
-              <Form.Item name="color" style={{ width: "100%" }}>
-                <Select defaultValue={row.color}>
-                  <Option value="Purple">Purple</Option>
-                </Select>
-              </Form.Item>
-            );
-          case "Dental Model":
-            return (
-              <Form.Item name="color" style={{ width: "100%" }}>
-                <Select defaultValue={row.color}>
-                  <Option value="White">White</Option>
-                </Select>
-              </Form.Item>
-            );
-          default:
-            return (
-              <Form.Item name="color" style={{ width: "100%" }}>
-                <Select defaultValue={row.color}>
-                  <Option value="Clear">Clear</Option>
-                </Select>
-              </Form.Item>
-            );
-        }
-      },
-    },
-    {
       title: "Layer Thickness (um)",
-      dataIndex: "layerThickness",
+      dataIndex: "layerHeight",
       width: "16%",
       editable: true,
     },
     {
       title: "Base Layer Count",
-      dataIndex: "baseLayerCount",
+      dataIndex: "bottomLayerCount",
       width: "16%",
       editable: true,
     },
     {
       title: "Base Exposure Time (s)",
-      dataIndex: "baseExposureTime",
+      dataIndex: "bottomLayerExposureTime",
       width: "16%",
       editable: true,
     },
     {
       title: "Layer Exposure Time (s)",
-      dataIndex: "layerExposureTime",
+      dataIndex: "normalExposureTime",
       width: "16%",
       editable: true,
     },
@@ -249,10 +163,10 @@ const Model = ({ brand, models }) => {
       onCell: (record) => ({
         record,
         inputType:
-          col.dataIndex === "layerThickness" ||
-          col.dataIndex === "baseLayerCount" ||
-          col.dataIndex === "baseExposureTime" ||
-          col.dataIndex === "layerExposureTime"
+          col.dataIndex === "layerHeight" ||
+          col.dataIndex === "bottomLayerCount" ||
+          col.dataIndex === "bottomLayerExposureTime" ||
+          col.dataIndex === "normalExposureTime"
             ? "number"
             : "text",
         dataIndex: col.dataIndex,
@@ -265,47 +179,121 @@ const Model = ({ brand, models }) => {
   const onFinish = (values) => {
     console.log(values);
     const models = values.models || [];
+    const zip = jszip();
     for (let model of models) {
+      let cfgForAll = "";
       for (let row of data) {
         console.log(brand, model);
         console.log(row);
         let result = defaultValueCFG[brand][model];
         for (let key in row) {
-          if (key !== "key") result[key] = row[key];
-        }
-        const brandReplace = brand.replace(" ", "_");
-        const modelReplace = model.replace(" ", "_");
+          if (key === "key") continue;
 
-        const resin = row.__resin.replace(" ", "_");
-        const color = row.color.replace(" ", "_");
-        const element = document.createElement("a");
-        let cfg = "";
-        for (let key in result) {
-          cfg = cfg.concat(`${key}:${result[key]}\n`);
+          if (key === "layerHeight") {
+            const data = row[key] * 0.001;
+            result[key] = data;
+          } else {
+            result[key] = row[key];
+          }
         }
-        const file = new Blob([cfg], {
-          type: "text/plain;charset=utf-8",
-        });
-        element.href = URL.createObjectURL(file);
-        element.download = `_${brandReplace}_${modelReplace}_${resin}_${color}_profile.cfg`;
-        document.body.appendChild(element);
-        element.click();
+        const resin = row.__resin;
+        for (let color of resinColors[resin]) {
+          console.log(`download ${brand} ${model} ${resin} ${color}`);
+          const folder = zip.folder(resin);
+          downloadFile(brand, model, resin, color, result, folder);
+        }
+        for (let color of resinColors[resin]) {
+          for (let key in result) {
+            cfgForAll = cfgForAll.concat(
+              `@@QTS ${resin} ${color}@@${key}:${result[key]}\n`
+            );
+          }
+        }
       }
+      downloadAll(brand, model, cfgForAll, zip);
+      zip.generateAsync({ type: "blob" }).then(function (content) {
+        // see FileSaver.js
+        saveAs(content, `${brand} ${model}.zip`);
+      });
     }
+  };
+
+  const downloadAll = (brand, model, cfg, zip) => {
+    const brandReplace = brand.replace(" ", "_");
+    const modelReplace = model.replace(" ", "_");
+
+    // const element = document.createElement("a");
+
+    for (let key in defaultValueCFG[brand][model]) {
+      cfg = cfg.concat(`${key}:${defaultValueCFG[brand][model][key]}\n`);
+    }
+
+    const file = new Blob([cfg], {
+      type: "text/plain;charset=utf-8",
+    });
+    const fileName = `_${brandReplace}_${modelReplace}_all_profile.cfg`;
+    zip.file(fileName, file);
+
+    // element.href = URL.createObjectURL(file);
+    // element.download = `_${brandReplace}_${modelReplace}_all_profile.cfg`;
+    // document.body.appendChild(element);
+    // element.click();
+  };
+
+  const downloadFile = (brand, model, resin, color, result, folder) => {
+    const brandReplace = brand.replace(" ", "_");
+    const modelReplace = model.replace(" ", "_");
+    const resinReplace = resin.replace(" ", "_");
+    const colorReplace = color.replace(" ", "_");
+
+    // const element = document.createElement("a");
+    let cfg = "";
+    for (let key in result) {
+      cfg = cfg.concat(`@@QTS ${resin} ${color}@@${key}:${result[key]}\n`);
+    }
+    for (let key in result) {
+      cfg = cfg.concat(`${key}:${result[key]}\n`);
+    }
+    const file = new Blob([cfg], {
+      type: "text/plain;charset=utf-8",
+    });
+    const fileName = `_${brandReplace}_${modelReplace}_QTS_${resinReplace}_${colorReplace}_profile.cfg`;
+    folder.file(fileName, file);
+    // element.href = URL.createObjectURL(file);
+    // document.body.appendChild(element);
+    // element.click();
   };
   return (
     <div style={{ width: 800, padding: 15 }}>
       <Form name={brand} form={form} onFinish={onFinish} component={false}>
         <h3>{brand}</h3>
-        <Form.Item label="Models" name="models">
-          <Select mode="multiple" style={{ width: 200 }}>
-            {models.map((model) => (
-              <Option value={model} key={model}>
-                {model}
-              </Option>
-            ))}
-          </Select>
-        </Form.Item>
+        <Row gutter={20}>
+          <Col>
+            <Form.Item label="Models" name="models">
+              <Select mode="multiple" style={{ width: 200 }}>
+                {models.map((model) => (
+                  <Option value={model} key={model}>
+                    {model}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </Col>
+          <Col>
+            <Form.Item>
+              <Button
+                type="primary"
+                htmlType="submit"
+                onClick={() => {
+                  form.submit();
+                }}
+              >
+                Download
+              </Button>
+            </Form.Item>
+          </Col>
+        </Row>
+
         <Table
           size="small"
           components={{
@@ -319,17 +307,6 @@ const Model = ({ brand, models }) => {
           rowClassName="editable-row"
           pagination={false}
         />
-        <Form.Item style={{ marginTop: 15 }}>
-          <Button
-            type="primary"
-            htmlType="submit"
-            onClick={() => {
-              form.submit();
-            }}
-          >
-            Download
-          </Button>
-        </Form.Item>
       </Form>
     </div>
   );
