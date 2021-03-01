@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/chitubox/static/css/main.1cbe692f.chunk.css",
-    "main.js": "/chitubox/static/js/main.70a84274.chunk.js",
-    "main.js.map": "/chitubox/static/js/main.70a84274.chunk.js.map",
+    "main.js": "/chitubox/static/js/main.ded5a8e9.chunk.js",
+    "main.js.map": "/chitubox/static/js/main.ded5a8e9.chunk.js.map",
     "runtime-main.js": "/chitubox/static/js/runtime-main.29ab58e1.js",
     "runtime-main.js.map": "/chitubox/static/js/runtime-main.29ab58e1.js.map",
     "static/css/2.f3f01324.chunk.css": "/chitubox/static/css/2.f3f01324.chunk.css",
@@ -18,6 +18,6 @@
     "static/css/2.f3f01324.chunk.css",
     "static/js/2.db868752.chunk.js",
     "static/css/main.1cbe692f.chunk.css",
-    "static/js/main.70a84274.chunk.js"
+    "static/js/main.ded5a8e9.chunk.js"
   ]
 }
