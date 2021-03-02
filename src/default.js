@@ -3222,7 +3222,7 @@ export const defaultValueCFG = {
       transitionLayerType: "0",
       zSlowUpDistance: "0",
     },
-    "Sonic Mini #5": {
+    "Sonic Mini": {
       __resin: "normal",
       antiAliasLevel: "4",
       bAntiAliasLevelEditable: "0",
